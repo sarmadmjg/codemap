@@ -27,6 +27,6 @@ class Entry(Base):
     category_id = Column(Integer, ForeignKey('category.id'))
 
 
-engine = create_engine('sqlite:///restaurantmenu.db')
+engine = create_engine('sqlite:///codemap.db')
 
 Base.metadata.create_all(engine)
