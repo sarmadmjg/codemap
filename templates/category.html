@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block content %}
+    <!-- List entries, if any -->
+    {% if entries %}
+        {% for entry in entries %}
+            <article>
+                <h3>{{ entry }}</h3>
+            </article>
+        {% endfor %}
+    <!-- The category is empty -->
+    {% else %}
+        <p>This category is currently empty</p>
+    {% endif %}
+{% endblock %}

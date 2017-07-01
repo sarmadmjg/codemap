@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 
-from flask import Flask
+from flask import Flask, render_template
 
 
 app = Flask(__name__)
@@ -15,7 +15,7 @@ def home():
 # List items in a given category
 @app.route('/categories/<string:cat>/')
 def category(cat):
-    return 'You are visiting the listings in category: ' + cat
+    return render_template('category.html', entries=['udacity', 'edx'])
 
 
 # Show entry details
