@@ -11,7 +11,9 @@ class Category(Base):
     __tablename__ = 'category'
 
     id = Column(Integer, primary_key=True)
+    # name will appear in links (no spaces), long_name is rendered in the page
     name = Column(String(80), nullable=False)
+    long_name = Column(String(80), nullable=False)
     description = Column(String(250), nullable=True)
 
 
