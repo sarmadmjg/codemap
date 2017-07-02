@@ -12,7 +12,7 @@
     box-shadow: 2px 2px 10px #bbb;
     min-height: 7em;
     margin-top: 1em;
-    /*padding: 1em;*/
+    padding: 15px;
 }
 
 .input-group {
@@ -21,4 +21,19 @@
 
 #form-cat {
     max-width: 300px;
+}
+
+.navbar-right {
+    margin-right: 0;
+}
+
+h2,
+h3 {
+    margin-top: 0;
+}
+
+.entry-control {
+    float: right;
+    color: #bbb;
+    margin-left: 15px;
 }

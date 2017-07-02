@@ -16,10 +16,9 @@
             <div class="navbar-header">
                 <a class="navbar-brand" href="/">Codemap</a>
             </div>
-            <a class="navbar-text navbar-right navbar-link"
-               href="{{ url_for('login') }}">
-                Login
-            </a>
+            <p class="navbar-text navbar-right">
+                <a href="{{ url_for('login') }}" class="navbar-link">Login</a>
+            </p>
         </div>
     </header>
     <main class="container-fluid">
@@ -41,6 +40,8 @@
             </section>
         </div>
     </main>
+
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-3.2.1.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
 </body>
 </html>
