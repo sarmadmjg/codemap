@@ -5,22 +5,25 @@
     <title>Codemap</title>
     <!-- Styles -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}"> -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.min.css') }}">
     <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-theme.min.css') }}"> -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <div class="container-fluid">
-        <header class="row">
-            <div class="col-xs-10">
-                <h1>Codemap</h1>
+    <header class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/">Codemap</a>
             </div>
-            <div class="col-xs-2">
-                <span>Login</span>
-            </div>
-        </header>
-
-        <main class="row">
+            <a class="navbar-text navbar-right navbar-link"
+               href="{{ url_for('login') }}">
+                Login
+            </a>
+        </div>
+    </header>
+    <main class="container-fluid">
+        <div class="row">
             <aside class="col-sm-3">
                 <div class="list-group">
                 {% for cat in categories %}
@@ -36,8 +39,8 @@
             <section class="col-sm-9">
                 {% block content %}{% endblock %}
             </section>
-        </main>
-    </div>
+        </div>
+    </main>
     <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
 </body>
 </html>
