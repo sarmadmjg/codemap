@@ -67,7 +67,7 @@ def add_entry():
         session = Session()
         session.add(entry)
         session.commit()
-        return redirect(url_for('home'))
+        return redirect(url_for('category', cat=data['category']))
 
 # Show entry details
 @app.route('/entries/<int:id>/')
@@ -101,7 +101,7 @@ def edit_entry(id):
         session.add(entry)
         session.commit()
 
-        return redirect(url_for('home'))
+        return redirect(url_for('category', cat=data['category']))
 
 
 # Delete an entry
@@ -123,7 +123,7 @@ def delete_entry(id):
         session.delete(entry)
         session.commit()
 
-        return redirect(url_for('home'))
+        return redirect(url_for('category', cat=entry.category))
 
 
 # Login page

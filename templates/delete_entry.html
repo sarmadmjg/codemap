@@ -4,7 +4,7 @@
     <p>Are you sure you want to delete this entry?</p>
     <h3>{{ entry.name }}</h3>
     <form method="POST">
-        <a href="{{ url_for('home') }}">Cancel</a>
+        <a href="{{ url_for('category', cat=entry.category) }}">Cancel</a>
         <button type="submit">Delete</button>
     </form>
 {% endblock %}
