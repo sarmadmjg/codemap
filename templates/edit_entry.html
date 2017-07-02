@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block content %}
+    <form method="POST">
+        <label>
+            Entry Name:
+            <input type="text" name="name" value="{{ entry.name }}">
+        </label>
+        <label>
+            Short Description:
+            <input type="text" name="description" value="{{ entry.description }}">
+        </label>
+        <label>
+            Link:
+            <input type="text" name="link" value="{{ entry.link }}">
+        </label>
+        <label>
+            Category:
+            <select name="category">
+                {% for cat in categories %}
+                <option value={{ cat.id }}
+                        {% if cat.id == entry.category_id %} selected {% endif %}>
+                    {{ cat.long_name }}
+                </option>
+                {% endfor %}
+            </select>
+        </label>
+        <button type="submit">Save</button>
+    </form>
+{% endblock %}
