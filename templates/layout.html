@@ -22,11 +22,15 @@
 
         <main class="row">
             <aside class="col-sm-3">
-                <ul class="list-group">
+                <div class="list-group">
                 {% for cat in categories %}
-                    <li class="list-group-item"><a href="{{ url_for('category', cat=cat.name) }}">{{ cat.long_name }}</a></li>
+                    <a class="list-group-item
+                            {% if this_cat and this_cat.name == cat.name %} active {% endif %}"
+                            href="{{ url_for('category', cat=cat.name) }}">
+                        {{ cat.long_name }}
+                    </a>
                 {% endfor %}
-                </ul>
+                </div>
             </aside>
 
             <section class="col-sm-9">
