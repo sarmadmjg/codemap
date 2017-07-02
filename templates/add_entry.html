@@ -17,7 +17,7 @@
             Category:
             <select name="category">
                 {% for cat in categories %}
-                <option value={{ cat.id }}>{{ cat.long_name }}</option>
+                <option value={{ cat.name }}>{{ cat.long_name }}</option>
                 {% endfor %}
             </select>
         </label>
