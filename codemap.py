@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 
-from flask import Flask, request, render_template, url_for, redirect, abort
+from flask import Flask, request, render_template, url_for, redirect, abort, flash
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -68,9 +68,13 @@ def add_entry():
         # handle new entry
         data = request.form
         entry = Entry(name=data['name'], description=data['description'], link=data['link'], category=data['category'])
+
         session = Session()
         session.add(entry)
         session.commit()
+
+        flash('A new entry was successfully created!', 'alert-success')
+
         return redirect(url_for('category', cat=data['category']))
 
 # Show entry details
@@ -105,6 +109,8 @@ def edit_entry(id):
         session.add(entry)
         session.commit()
 
+        flash('Entry #' + str(entry.id) + ' was successfully edited!', 'alert-success')
+
         return redirect(url_for('category', cat=data['category']))
 
 
@@ -127,6 +133,8 @@ def delete_entry(id):
         session.delete(entry)
         session.commit()
 
+        flash('Entry #' + str(entry.id) + ' was successfully deleted!', 'alert-success')
+
         return redirect(url_for('category', cat=entry.category))
 
 
@@ -137,5 +145,6 @@ def login():
 
 
 if __name__ == '__main__':
+    app.secret_key = '90maf89j2489dnmo23aeqduemc'
     app.debug = True
     app.run('0.0.0.0', 5000)
