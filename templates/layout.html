@@ -10,21 +10,30 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <header>
-        <h1>Codemap</h1>
-        <h2>Roadmap To Becoming a Full Stack Web Developer</h2>
-    </header>
-    <main>
-        <aside>
-            <ul>
-            {% for cat in categories %}
-                <li><a href="{{ url_for('category', cat=cat.name) }}">{{ cat.long_name }}</a></li>
-            {% endfor %}
-            </ul>
-        </aside>
-        <section>
-            {% block content %}{% endblock %}
-        </section>
-    </main>
+    <div class="container-fluid">
+        <header class="row">
+            <div class="col-xs-10">
+                <h1>Codemap</h1>
+            </div>
+            <div class="col-xs-2">
+                <span>Login</span>
+            </div>
+        </header>
+
+        <main class="row">
+            <aside class="col-sm-3">
+                <ul>
+                {% for cat in categories %}
+                    <li><a href="{{ url_for('category', cat=cat.name) }}">{{ cat.long_name }}</a></li>
+                {% endfor %}
+                </ul>
+            </aside>
+
+            <section class="col-sm-9">
+                {% block content %}{% endblock %}
+            </section>
+        </main>
+    </div>
+
 </body>
 </html>

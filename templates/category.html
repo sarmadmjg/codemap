@@ -2,12 +2,15 @@
 {% block content %}
     <!-- List entries, if any -->
     {% if entries %}
-        {% for entry in entries %}
-            <article id='{{ entry.id }}'>
-                <h3>{{ entry.name }}</h3>
-                <p>{{ entry.description }}</p>
+        <div class="row">
+            {% for entry in entries %}
+            <article id='{{ entry.id }}' class="entry col-xs-12">
+                <h3 class="entry-title">{{ entry.name }}</h3>
+                <p class="entry-description">{{ entry.description }}</p>
             </article>
-        {% endfor %}
+            {% endfor %}
+        </div>
+
     <!-- The category is empty -->
     {% else %}
         <p>This category is currently empty</p>
