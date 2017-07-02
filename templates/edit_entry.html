@@ -1,21 +1,42 @@
 {% extends "layout.html" %}
 {% block content %}
+    <h2 class="text-center">Edit Entry</h2>
+    <p class="text-center">Entry id: <mark>{{ entry.id }}</mark></p>
     <form method="POST">
-        <label>
-            Entry Name:
-            <input type="text" name="name" value="{{ entry.name }}">
-        </label>
-        <label>
-            Short Description:
-            <input type="text" name="description" value="{{ entry.description }}">
-        </label>
-        <label>
-            Link:
-            <input type="text" name="link" value="{{ entry.link }}">
-        </label>
-        <label>
-            Category:
-            <select name="category">
+        <label for="form-name">Entry Name</label>
+        <div class="form-group">
+            <input type="text"
+                   id="form-name"
+                   class="form-control"
+                   name="name"
+                   required
+                   value="{{ entry.name }}">
+        </div>
+
+        <label for="form-desc">Short Description</label>
+        <div class="form-group">
+            <input type="text"
+                   id="form-desc"
+                   class="form-control"
+                   name="description"
+                   required
+                   value="{{ entry.description }}">
+        </div>
+
+        <label for="form-link">Link</label>
+        <div class="form-group">
+            <input type="url"
+                   id="form-link"
+                   class="form-control"
+                   name="link"
+                   required
+                   value="{{ entry.link }}">
+        </div>
+
+        <label for="form-cat">Category</label>
+        <div class="form-group">
+            <select id="form-cat" class="form-control" name="category">
+                <!-- Populate categories and make the referral as default -->
                 {% for cat in categories %}
                 <option value={{ cat.name }}
                         {% if cat.name == entry.category %} selected {% endif %}>
@@ -23,7 +44,15 @@
                 </option>
                 {% endfor %}
             </select>
-        </label>
-        <button type="submit">Save</button>
+        </div>
+        <br>
+
+        <a class="btn btn-default" href="{{ url_for('category', cat=entry.category) }}">
+            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Cancel
+        </a>
+
+        <button type="submit" class="btn btn-primary">
+            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Save
+        </button>
     </form>
 {% endblock %}
