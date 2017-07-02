@@ -45,7 +45,7 @@ def category(cat):
     # If category doesn't exit, raise 404
     if not cat_obj:
         abort(404)
-    entries = session.query(Entry).filter(Entry.category_id == cat_obj.id).all()
+    entries = session.query(Entry).filter(Entry.category == cat).all()
     return render_template(
                 'category.html',
                 categories=categories,
@@ -63,7 +63,7 @@ def add_entry():
     elif request.method == 'POST':
         # handle new entry
         data = request.form
-        entry = Entry(name=data['name'], description=data['description'], link=data['link'], category_id=data['category'])
+        entry = Entry(name=data['name'], description=data['description'], link=data['link'], category=data['category'])
         session = Session()
         session.add(entry)
         session.commit()
@@ -96,7 +96,7 @@ def edit_entry(id):
         entry.name = data['name']
         entry.description = data['description']
         entry.link = data['link']
-        entry.category_id = data['category']
+        entry.category = data['category']
 
         session.add(entry)
         session.commit()
