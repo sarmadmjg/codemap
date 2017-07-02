@@ -15,10 +15,10 @@
     /*padding: 1em;*/
 }
 
-/*.entry-title {
-    margin: 0;
+.input-group {
+    width: 100%;
 }
 
-.entry-description {
-
-}*/
+#form-cat {
+    max-width: 300px;
+}

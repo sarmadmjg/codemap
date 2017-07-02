@@ -1,21 +1,38 @@
 {% extends "layout.html" %}
 {% block content %}
+    <h2 class="text-center">Create Entry</h2>
     <form method="POST">
-        <label>
-            Entry Name:
-            <input type="text" name="name">
-        </label>
-        <label>
-            Short Description:
-            <input type="text" name="description">
-        </label>
-        <label>
-            Link:
-            <input type="text" name="link">
-        </label>
-        <label>
-            Category:
-            <select name="category">
+        <label for="form-name">Entry Name</label>
+        <div class="form-group">
+            <input type="text"
+                   id="form-name"
+                   class="form-control"
+                   name="name"
+                   required>
+        </div>
+
+        <label for="form-desc">Short Description</label>
+        <div class="form-group">
+            <input type="text"
+                   id="form-desc"
+                   class="form-control"
+                   name="description"
+                   required>
+        </div>
+
+        <label for="form-link">Link</label>
+        <div class="form-group">
+            <input type="url"
+                   id="form-link"
+                   class="form-control"
+                   name="link"
+                   required>
+        </div>
+
+        <label for="form-cat">Category</label>
+        <div class="form-group">
+            <select id="form-cat" class="form-control" name="category">
+                <!-- Populate categories and make the referral as default -->
                 {% for cat in categories %}
                 <option value={{ cat.name }}
                         {% if cat.name == def_cat %}
@@ -25,7 +42,15 @@
                 </option>
                 {% endfor %}
             </select>
-        </label>
-        <button type="submit">Save</button>
+        </div>
+        <br>
+
+        <a class="btn btn-default" href="{{ url_for('category', cat=def_cat) }}">
+            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Cancel
+        </a>
+
+        <button type="submit" class="btn btn-primary">
+            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Save
+        </button>
     </form>
 {% endblock %}
