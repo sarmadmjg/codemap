@@ -20,8 +20,6 @@ class Category(Base):
 class Entry(Base):
     __tablename__ = 'entry'
 
-    category = relationship(Category)
-
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
     description = Column(String, nullable=True)

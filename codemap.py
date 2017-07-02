@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 
-from flask import Flask, render_template
+from flask import Flask, render_template, abort
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -19,9 +19,9 @@ engine = create_engine('sqlite:///codemap.db')
 Base.metadata.bind = engine
 
 Session = sessionmaker(bind=engine)
-session = Session()
 
 # Categories can only be added and deleted by siteAdmin, so only need to be queried once
+session = Session()
 categories = session.query(Category).all()
 
 
@@ -39,10 +39,18 @@ def home():
 # List items in a given category
 @app.route('/categories/<string:cat>/')
 def category(cat):
+    session = Session()
+    cat_obj = session.query(Category).filter(Category.name == cat).one_or_none()
+
+    # If category doesn't exit, raise 404
+    if not cat_obj:
+        abort(404)
+    entries = session.query(Entry).filter(Entry.category_id == cat_obj.id).all()
+    print(entries)
     return render_template(
                 'category.html',
                 categories=categories,
-                entries=['udacity', 'edx'])
+                entries=entries)
 
 
 # Show entry details

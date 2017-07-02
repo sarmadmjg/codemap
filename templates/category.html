@@ -3,8 +3,9 @@
     <!-- List entries, if any -->
     {% if entries %}
         {% for entry in entries %}
-            <article>
-                <h3>{{ entry }}</h3>
+            <article id='{{ entry.id }}'>
+                <h3>{{ entry.name }}</h3>
+                <p>{{ entry.description }}</p>
             </article>
         {% endfor %}
     <!-- The category is empty -->

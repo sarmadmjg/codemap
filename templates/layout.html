@@ -10,7 +10,11 @@
     </header>
     <main>
         <aside>
-            <!-- categories go here -->
+            <ul>
+            {% for cat in categories %}
+                <li>{{ cat.long_name }}</li>
+            {% endfor %}
+            </ul>
         </aside>
         <section>
             {% block content %}{% endblock %}
