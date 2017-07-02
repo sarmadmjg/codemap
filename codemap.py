@@ -33,7 +33,7 @@ categories = session.query(Category).all()
 # Home page
 @app.route('/')
 def home():
-    return 'You are visiting the home page'
+    return render_template('home.html', categories=categories)
 
 
 # List items in a given category
