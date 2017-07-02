@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 
-from flask import Flask, render_template, abort
+from flask import Flask, request, render_template, abort
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -52,6 +52,18 @@ def category(cat):
                 categories=categories,
                 entries=entries)
 
+
+# Add entry
+@app.route('/entries/add/', methods=['GET', 'POST'])
+def add_entry():
+    if request.method == 'GET':
+        return render_template(
+                    'add_entry.html',
+                    categories=categories)
+
+    elif request.method == 'POST':
+        # handle new entry
+        pass
 
 # Show entry details
 @app.route('/entries/<int:id>/')
