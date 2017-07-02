@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 
-from flask import Flask, request, render_template, abort
+from flask import Flask, request, render_template, url_for, redirect, abort
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -63,7 +63,12 @@ def add_entry():
 
     elif request.method == 'POST':
         # handle new entry
-        pass
+        data = request.form
+        entry = Entry(name=data['name'], description=data['description'], link=data['link'], category_id=data['category'])
+        session = Session()
+        session.add(entry)
+        session.commit()
+        return redirect(url_for('home'))
 
 # Show entry details
 @app.route('/entries/<int:id>/')
