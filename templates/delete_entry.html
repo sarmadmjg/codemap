@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+{% block content %}
+    <!-- List entries, if any -->
+    <p>Are you sure you want to delete this entry?</p>
+    <h3>{{ entry.name }}</h3>
+    <form method="POST">
+        <a href="{{ url_for('home') }}">Cancel</a>
+        <button type="submit">Delete</button>
+    </form>
+{% endblock %}

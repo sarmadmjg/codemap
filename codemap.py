@@ -108,7 +108,23 @@ def edit_entry(id):
 # Delete an entry
 @app.route('/entries/<int:id>/delete/', methods=['GET', 'POST'])
 def delete_entry(id):
-    return 'You are deleting entry ' + str(id)
+    # Check if the entry id is valid
+    session = Session()
+    entry = session.query(Entry).filter(Entry.id == id).one_or_none()
+    if not entry:
+        abort(404)
+
+    if request.method == 'GET':
+        return render_template(
+                    'delete_entry.html',
+                    entry=entry,
+                    categories=categories)
+
+    elif request.method == 'POST':
+        session.delete(entry)
+        session.commit()
+
+        return redirect(url_for('home'))
 
 
 # Login page
