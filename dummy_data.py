@@ -143,12 +143,11 @@ for cat in categories:
 
 # Populate entries
 for entry in entries:
-    cat = session.query(Category).filter(Category.name == entry['category']).one()
     e = Entry(
             name=entry['name'],
             description=entry['description'],
             link=entry['link'],
-            category_id=cat.id)
+            category=entry['category'])
 
     session.add(e)
     session.commit()
