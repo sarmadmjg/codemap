@@ -2,8 +2,32 @@
 
 from flask import Flask, render_template
 
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from db_setup import Base, Category, Entry
+
+
+# <=======================================================>
+# <==================== Initial Setup ====================>
+# <=======================================================>
 
 app = Flask(__name__)
+
+# link to the database
+engine = create_engine('sqlite:///codemap.db')
+
+Base.metadata.bind = engine
+
+Session = sessionmaker(bind=engine)
+session = Session()
+
+# Categories can only be added and deleted by siteAdmin, so only need to be queried once
+categories = session.query(Category).all()
+
+
+# <=======================================================>
+# <======================= Routing =======================>
+# <=======================================================>
 
 
 # Home page
@@ -15,7 +39,10 @@ def home():
 # List items in a given category
 @app.route('/categories/<string:cat>/')
 def category(cat):
-    return render_template('category.html', entries=['udacity', 'edx'])
+    return render_template(
+                'category.html',
+                categories=categories,
+                entries=['udacity', 'edx'])
 
 
 # Show entry details
