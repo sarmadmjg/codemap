@@ -23,7 +23,7 @@ class Entry(Base):
     category = relationship(Category)
 
     id = Column(Integer, primary_key=True)
-    name = Column(String(250), nullable=False)
+    name = Column(String, nullable=False)
     description = Column(String, nullable=True)
     link = Column(String, nullable=False)
     category_id = Column(Integer, ForeignKey('category.id'))
