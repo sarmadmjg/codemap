@@ -46,7 +46,6 @@ def category(cat):
     if not cat_obj:
         abort(404)
     entries = session.query(Entry).filter(Entry.category_id == cat_obj.id).all()
-    print(entries)
     return render_template(
                 'category.html',
                 categories=categories,
