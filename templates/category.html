@@ -1,6 +1,12 @@
 {% extends "layout.html" %}
 {% block content %}
     <!-- List entries, if any -->
+    <div class="row">
+        <div class="col-xs-12">
+            <h2>{{ this_cat.long_name }}</h2>
+            <p>{{ this_cat.description}}</p>
+        </div>
+    </div>
     {% if entries %}
         {% for entry in entries %}
         <article id='{{ entry.id }}' class="entry row">

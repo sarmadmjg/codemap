@@ -45,9 +45,11 @@ def category(cat):
     # If category doesn't exit, raise 404
     if not cat_obj:
         abort(404)
+
     entries = session.query(Entry).filter(Entry.category == cat).all()
     return render_template(
                 'category.html',
+                this_cat=cat_obj,
                 categories=categories,
                 entries=entries)
 
