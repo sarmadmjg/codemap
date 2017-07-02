@@ -4,10 +4,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Codemap</title>
     <!-- Styles -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='normalize.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-theme.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-theme.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <div class="container-fluid">
@@ -22,9 +22,9 @@
 
         <main class="row">
             <aside class="col-sm-3">
-                <ul>
+                <ul class="list-group">
                 {% for cat in categories %}
-                    <li><a href="{{ url_for('category', cat=cat.name) }}">{{ cat.long_name }}</a></li>
+                    <li class="list-group-item"><a href="{{ url_for('category', cat=cat.name) }}">{{ cat.long_name }}</a></li>
                 {% endfor %}
                 </ul>
             </aside>
@@ -34,6 +34,6 @@
             </section>
         </main>
     </div>
-
+    <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
 </body>
 </html>

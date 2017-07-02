@@ -17,7 +17,12 @@
             Category:
             <select name="category">
                 {% for cat in categories %}
-                <option value={{ cat.name }}>{{ cat.long_name }}</option>
+                <option value={{ cat.name }}
+                        {% if cat.name == def_cat %}
+                        selected
+                        {% endif %}>
+                    {{ cat.long_name }}
+                </option>
                 {% endfor %}
             </select>
         </label>

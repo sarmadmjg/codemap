@@ -58,8 +58,10 @@ def category(cat):
 @app.route('/entries/add/', methods=['GET', 'POST'])
 def add_entry():
     if request.method == 'GET':
+        cat = request.args.get('category')
         return render_template(
                     'add_entry.html',
+                    def_cat=cat,
                     categories=categories)
 
     elif request.method == 'POST':

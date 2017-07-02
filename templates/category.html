@@ -28,7 +28,7 @@
 
     <div class="row">
         <div class="col-xs-12">
-            <span><a href="{{ url_for('add_entry') }}">Add Entry</a>
+            <span><a href="{{ url_for('add_entry', category=this_cat.name) }}">Add Entry</a>
         </div>
     </div>
 {% endblock %}
