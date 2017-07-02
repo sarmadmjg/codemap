@@ -79,19 +79,30 @@ def entry(id):
 # Edit an entry
 @app.route('/entries/<int:id>/edit/', methods=['GET', 'POST'])
 def edit_entry(id):
+    # Check if the entry id is valid
+    session = Session()
+    entry = session.query(Entry).filter(Entry.id == id).one_or_none()
+    if not entry:
+        abort(404)
+
     if request.method == 'GET':
-        session = Session()
-        entry = session.query(Entry).filter(Entry.id == id).one_or_none()
-        if not entry:
-            abort(404)
         return render_template(
                     'edit_entry.html',
                     entry=entry,
                     categories=categories)
 
     elif request.method == 'POST':
-        # handle new entry
-        pass
+        data = request.form
+
+        entry.name = data['name']
+        entry.description = data['description']
+        entry.link = data['link']
+        entry.category_id = data['category']
+
+        session.add(entry)
+        session.commit()
+
+        return redirect(url_for('home'))
 
 
 # Delete an entry
