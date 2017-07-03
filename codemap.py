@@ -204,7 +204,12 @@ def add_entry(user):
     elif request.method == 'POST':
         # handle new entry
         data = request.form
-        entry = Entry(name=data['name'], description=data['description'], link=data['link'], category=data['category'])
+        entry = Entry(
+            name=data['name'],
+            description=data['description'],
+            link=data['link'],
+            category=data['category'],
+            poster_uid=user.uid)
 
         session = Session()
         session.add(entry)
