@@ -165,8 +165,9 @@ def get_user_from_session(login_session):
 @app.route('/')
 def home():
     user = get_user_from_session(login_session)
+    pic = login_session.get('pic')
 
-    return render_template('home.html', categories=categories, user=user)
+    return render_template('home.html', categories=categories, user=user, pic=pic)
 
 
 # List items in a given category
@@ -180,13 +181,16 @@ def category(cat):
     if not cat_obj:
         abort(404)
 
+    pic = login_session.get('pic')
+
     entries = session.query(Entry).filter(Entry.category == cat).all()
     return render_template(
                 'category.html',
                 this_cat=cat_obj,
                 categories=categories,
                 entries=entries,
-                user=user)
+                user=user,
+                pic=pic)
 
 
 # Add entry
@@ -194,12 +198,15 @@ def category(cat):
 @requires_login
 def add_entry(user):
     if request.method == 'GET':
+        pic = login_session.get('pic')
+
         cat = request.args.get('category')
         return render_template(
                     'add_entry.html',
                     def_cat=cat,
                     categories=categories,
-                    user=user)
+                    user=user,
+                    pic=pic)
 
     elif request.method == 'POST':
         # handle new entry
@@ -223,6 +230,7 @@ def add_entry(user):
 @app.route('/entries/<int:id>/')
 def entry(id):
     user = get_user_from_session(login_session)
+    pic = login_session.get('pic')
     return 'You are previewing entry ' + str(id)
 
 
@@ -241,11 +249,14 @@ def edit_entry(id, user):
         abort(403)
 
     if request.method == 'GET':
+        pic = login_session.get('pic')
+
         return render_template(
                     'edit_entry.html',
                     entry=entry,
                     categories=categories,
-                    user=user)
+                    user=user,
+                    pic=pic)
 
     elif request.method == 'POST':
         data = request.form
@@ -278,11 +289,14 @@ def delete_entry(id, user):
         abort(403)
 
     if request.method == 'GET':
+        pic = login_session.get('pic')
+
         return render_template(
                     'delete_entry.html',
                     entry=entry,
                     categories=categories,
-                    user=user)
+                    user=user,
+                    pic=pic)
 
     elif request.method == 'POST':
         session.delete(entry)

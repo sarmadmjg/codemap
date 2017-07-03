@@ -41,3 +41,18 @@ h3 {
     color: #bbb;
     margin-left: 15px;
 }
+
+.navbar-brand {
+    font-family: serif;
+    font-size: 3em;
+}
+
+.prof-pic {
+    height: 50px;
+    margin: -15px 0;
+    border-radius: 50%;
+}
+
+.navbar-link {
+    margin-left: 15px;
+}
