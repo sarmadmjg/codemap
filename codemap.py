@@ -11,6 +11,7 @@ from db_setup import Base, Category, Entry
 # <==================== Initial Setup ====================>
 # <=======================================================>
 
+
 app = Flask(__name__)
 
 # link to the database
@@ -23,6 +24,17 @@ Session = sessionmaker(bind=engine)
 # Categories can only be added and deleted by siteAdmin, so only need to be queried once
 session = Session()
 categories = session.query(Category).all()
+
+
+# <=======================================================>
+# <=================== User Management ===================>
+# <=======================================================>
+
+
+# Login page
+@app.route('/login/')
+def login():
+    return render_template('login.html')
 
 
 # <=======================================================>
@@ -137,11 +149,6 @@ def delete_entry(id):
 
         return redirect(url_for('category', cat=entry.category))
 
-
-# Login page
-@app.route('/login/')
-def login():
-    return 'You are logging in'
 
 
 if __name__ == '__main__':

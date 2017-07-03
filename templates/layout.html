@@ -9,6 +9,7 @@
     <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.min.css') }}"> -->
     <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-theme.min.css') }}"> -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block head %}{% endblock %}
 </head>
 <body>
     <header class="navbar navbar-default">
