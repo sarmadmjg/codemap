@@ -132,11 +132,10 @@ def requires_login(f):
 
         if uid:
             # session contains uid, check if valid
-            session = Session()
-            user = session.query(User).filter(User.uid == uid).one_or_none()
+            user = get_user(uid)
             if user:
                 # user is logged in and uid is valid
-                return f(*args, **kwargs)
+                return f(*args, **kwargs, user=user)
             else:
                 # User has invalid uid
                 clean_session(login_session)
@@ -159,6 +158,11 @@ def get_user(uid):
     session = Session()
     user = session.query(User).filter(User.uid == uid).one_or_none()
     return user
+
+
+def route_decorator(f):
+    @wraps(f)
+    def wrapped(**args, **kwargs):
 
 
 # <=======================================================>
@@ -193,7 +197,7 @@ def category(cat):
 # Add entry
 @app.route('/entries/add/', methods=['GET', 'POST'])
 @requires_login
-def add_entry():
+def add_entry(user):
     if request.method == 'GET':
         cat = request.args.get('category')
         return render_template(
@@ -223,7 +227,7 @@ def entry(id):
 # Edit an entry
 @app.route('/entries/<int:id>/edit/', methods=['GET', 'POST'])
 @requires_login
-def edit_entry(id):
+def edit_entry(id, user):
     # Check if the entry id is valid
     session = Session()
     entry = session.query(Entry).filter(Entry.id == id).one_or_none()
@@ -255,7 +259,7 @@ def edit_entry(id):
 # Delete an entry
 @app.route('/entries/<int:id>/delete/', methods=['GET', 'POST'])
 @requires_login
-def delete_entry(id):
+def delete_entry(id, user):
     # Check if the entry id is valid
     session = Session()
     entry = session.query(Entry).filter(Entry.id == id).one_or_none()
