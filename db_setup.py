@@ -25,6 +25,15 @@ class Entry(Base):
     description = Column(String, nullable=True)
     link = Column(String, nullable=False)
     category = Column(String(80), ForeignKey('category.name'))
+    poster_uid = Column(String, ForeignKey('user.uid'))
+
+
+class User(Base):
+    __tablename__ = 'user'
+
+    uid = Column(String, primary_key=True)
+    name = Column(String, nullable=False)
+    email = Column(String)
 
 
 engine = create_engine('sqlite:///codemap.db')
