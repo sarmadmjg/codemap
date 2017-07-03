@@ -105,9 +105,8 @@ def gconnect():
     session.add(user)
     session.commit()
 
+    flash('You logged in successful with your Google account', 'alert-success')
 
-    # print(request.data)
-    # print(login_session['state'])
     return 'successful'
 
 
@@ -121,6 +120,8 @@ def logout():
 
     # Clean user session
     clean_session(login_session)
+
+    flash('You successfully logged out!', 'alert-success')
 
     return redirect(url_for('home'))
 
