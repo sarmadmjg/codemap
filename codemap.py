@@ -4,11 +4,13 @@ from flask import Flask, request, render_template, url_for, redirect, abort, fla
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from db_setup import Base, Category, Entry
+from db_setup import Base, Category, Entry, User
 
 import string
 import random
 from flask import session as login_session
+from oauth2client import client
+import requests
 
 
 # <=======================================================>
@@ -48,8 +50,59 @@ def login():
 # Google sign in
 @app.route('/gconnect/', methods=['POST'])
 def gconnect():
-    print(request.data)
-    print(login_session['state'])
+    # If state doesn't match, abort
+    if login_session['state'] != request.args.get('state'):
+        abort(403)
+
+    # If this request does not have `X-Requested-With` header, this could be a CSRF
+    if not request.headers.get('X-Requested-With'):
+        abort(403)
+
+    auth_code = request.data
+
+    CLIENT_SECRET_FILE = 'client_secret.json'
+
+    # Exchange auth code for access token, refresh token, and ID token
+    credentials = client.credentials_from_clientsecrets_and_code(
+        CLIENT_SECRET_FILE,
+        ['profile', 'email'],
+        auth_code)
+
+    # Get user info
+    userinfo_url = "https://www.googleapis.com/oauth2/v1/userinfo"
+    params = {'access_token': credentials.access_token, 'alt': 'json'}
+    data = requests.get(userinfo_url, params=params).json()
+
+    # Get profile info from ID token
+    uid = data['id']
+    name = data['name']
+    email = data['email']
+    pic = data['picture']
+
+    # Store data in user session
+    login_session['uid'] = uid
+    login_session['name'] = name
+    login_session['pic'] = pic
+    # store credentials for future use
+    login_session['credentials'] = credentials
+
+    # Store or update data in the db
+    session = Session()
+    user = session.query(User).filter(User.uid == uid).one_or_none()
+    # New user
+    if not user:
+        user = User(uid=uid, name=name, email=email)
+    # Existing user
+    else:
+        user.name = name
+        user.email = email
+
+    session.add(user)
+    session.commit()
+
+
+    # print(request.data)
+    # print(login_session['state'])
     abort(404)
 
 
