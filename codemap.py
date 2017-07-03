@@ -1,5 +1,7 @@
 #! /usr/bin/env python3
 
+from functools import wraps
+
 from flask import Flask, request, render_template, url_for, redirect, abort, flash
 
 from sqlalchemy import create_engine
@@ -11,6 +13,8 @@ import random
 from flask import session as login_session
 from oauth2client import client
 import requests
+import httplib2
+import json
 
 
 # <=======================================================>
@@ -84,7 +88,8 @@ def gconnect():
     login_session['name'] = name
     login_session['pic'] = pic
     # store credentials for future use
-    login_session['credentials'] = credentials
+    login_session['credentials'] = credentials.to_json()
+    # print(credentials)
 
     # Store or update data in the db
     session = Session()
@@ -103,7 +108,57 @@ def gconnect():
 
     # print(request.data)
     # print(login_session['state'])
-    abort(404)
+    return 'successful'
+
+
+@app.route('/logout/')
+def logout():
+    credentials_json = login_session.get('credentials')
+    # Revoke access if credentials are found
+    if credentials_json:
+        credentials = client.Credentials.new_from_json(credentials_json)
+        credentials.revoke(httplib2.Http())
+
+    # Clean user session
+    clean_session(login_session)
+
+    return redirect(url_for('home'))
+
+
+def requires_login(f):
+    @wraps(f)
+    def wrapped(*args, **kwargs):
+        uid = login_session.get('uid')
+
+        if uid:
+            # session contains uid, check if valid
+            session = Session()
+            user = session.query(User).filter(User.uid == uid).one_or_none()
+            if user:
+                # user is logged in and uid is valid
+                return f(*args, **kwargs)
+            else:
+                # User has invalid uid
+                clean_session(login_session)
+
+        # user is not logged in, redirect
+        return redirect(url_for('login'))
+
+    return wrapped
+
+
+def clean_session(login_session):
+    # Use pop instead of del to avoid errors with non-existing keys
+    login_session.pop('credentials', None)
+    login_session.pop('uid', None)
+    login_session.pop('name', None)
+    login_session.pop('pic', None)
+
+
+def get_user(uid):
+    session = Session()
+    user = session.query(User).filter(User.uid == uid).one_or_none()
+    return user
 
 
 # <=======================================================>
@@ -137,6 +192,7 @@ def category(cat):
 
 # Add entry
 @app.route('/entries/add/', methods=['GET', 'POST'])
+@requires_login
 def add_entry():
     if request.method == 'GET':
         cat = request.args.get('category')
@@ -166,6 +222,7 @@ def entry(id):
 
 # Edit an entry
 @app.route('/entries/<int:id>/edit/', methods=['GET', 'POST'])
+@requires_login
 def edit_entry(id):
     # Check if the entry id is valid
     session = Session()
@@ -197,6 +254,7 @@ def edit_entry(id):
 
 # Delete an entry
 @app.route('/entries/<int:id>/delete/', methods=['GET', 'POST'])
+@requires_login
 def delete_entry(id):
     # Check if the entry id is valid
     session = Session()
