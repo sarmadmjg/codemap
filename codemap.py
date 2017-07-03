@@ -236,6 +236,10 @@ def edit_entry(id, user):
     if not entry:
         abort(404)
 
+    # Check if user is not the rightful owner
+    if user.uid != entry.poster_uid:
+        abort(403)
+
     if request.method == 'GET':
         return render_template(
                     'edit_entry.html',
@@ -268,6 +272,10 @@ def delete_entry(id, user):
     entry = session.query(Entry).filter(Entry.id == id).one_or_none()
     if not entry:
         abort(404)
+
+    # Check if user is not the rightful owner
+    if user.uid != entry.poster_uid:
+        abort(403)
 
     if request.method == 'GET':
         return render_template(
