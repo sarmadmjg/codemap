@@ -126,22 +126,16 @@ def logout():
 
 
 def requires_login(f):
+
     @wraps(f)
     def wrapped(*args, **kwargs):
-        uid = login_session.get('uid')
+        user = get_user_from_session(login_session)
 
-        if uid:
-            # session contains uid, check if valid
-            user = get_user(uid)
-            if user:
-                # user is logged in and uid is valid
-                return f(*args, **kwargs, user=user)
-            else:
-                # User has invalid uid
-                clean_session(login_session)
+        if user:
+            return f(*args, **kwargs, user=user)
 
-        # user is not logged in, redirect
         return redirect(url_for('login'))
+
 
     return wrapped
 
@@ -154,15 +148,12 @@ def clean_session(login_session):
     login_session.pop('pic', None)
 
 
-def get_user(uid):
-    session = Session()
-    user = session.query(User).filter(User.uid == uid).one_or_none()
-    return user
-
-
-def route_decorator(f):
-    @wraps(f)
-    def wrapped(**args, **kwargs):
+def get_user_from_session(login_session):
+    uid = login_session.get('uid')
+    if uid:
+        session = Session()
+        user = session.query(User).filter(User.uid == uid).one_or_none()
+        return user
 
 
 # <=======================================================>
@@ -173,12 +164,15 @@ def route_decorator(f):
 # Home page
 @app.route('/')
 def home():
-    return render_template('home.html', categories=categories)
+    user = get_user_from_session(login_session)
+
+    return render_template('home.html', categories=categories, user=user)
 
 
 # List items in a given category
 @app.route('/categories/<string:cat>/')
 def category(cat):
+    user = get_user_from_session(login_session)
     session = Session()
     cat_obj = session.query(Category).filter(Category.name == cat).one_or_none()
 
@@ -191,7 +185,8 @@ def category(cat):
                 'category.html',
                 this_cat=cat_obj,
                 categories=categories,
-                entries=entries)
+                entries=entries,
+                user=user)
 
 
 # Add entry
@@ -203,7 +198,8 @@ def add_entry(user):
         return render_template(
                     'add_entry.html',
                     def_cat=cat,
-                    categories=categories)
+                    categories=categories,
+                    user=user)
 
     elif request.method == 'POST':
         # handle new entry
@@ -221,6 +217,7 @@ def add_entry(user):
 # Show entry details
 @app.route('/entries/<int:id>/')
 def entry(id):
+    user = get_user_from_session(login_session)
     return 'You are previewing entry ' + str(id)
 
 
@@ -238,7 +235,8 @@ def edit_entry(id, user):
         return render_template(
                     'edit_entry.html',
                     entry=entry,
-                    categories=categories)
+                    categories=categories,
+                    user=user)
 
     elif request.method == 'POST':
         data = request.form
@@ -270,7 +268,8 @@ def delete_entry(id, user):
         return render_template(
                     'delete_entry.html',
                     entry=entry,
-                    categories=categories)
+                    categories=categories,
+                    user=user)
 
     elif request.method == 'POST':
         session.delete(entry)
