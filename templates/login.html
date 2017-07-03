@@ -16,9 +16,12 @@
 {% endblock %}
 
 {% block content %}
-    <h2 class="text-center">Login</h2>
+    <div class="well text-center login-well">
+        <h2>Login</h2>
+        <br>
+        <button id="signinButton">Sign in with Google</button>
+    </div>
 
-    <button id="signinButton">Sign in with Google</button>
     <script>
         $('#signinButton').click(function() {
             auth2.grantOfflineAccess().then(signInCallback);

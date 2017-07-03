@@ -1,20 +1,22 @@
 {% extends "layout.html" %}
 {% block content %}
-    <!-- List entries, if any -->
-    <h2 class="text-center">Delete Entry</h2>
-    <h3 class="text-center">Are You Sure?</h3>
-    <p class="text-center">{{ entry.name }}</p>
-    <p class="text-center">Entry id: <mark>{{ entry.id }}</mark></p>
-    <br>
 
-    <form class="text-center" method="POST">
-        <a class="btn btn-default"
-           href="{{ url_for('category', cat=entry.category) }}">
-            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Cancel
-        </a>
+    <div class="well">
+        <h2 class="text-center">Delete Entry</h2>
+        <h3 class="text-center">Are You Sure?</h3>
+        <p class="text-center">{{ entry.name }}</p>
+        <p class="text-center">Entry id: <mark>{{ entry.id }}</mark></p>
+        <br>
+        <form class="text-center" method="POST">
+            <a class="btn btn-default"
+               href="{{ url_for('category', cat=entry.category) }}">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Cancel
+            </a>
 
-        <button class="btn btn-danger" type="submit">
-            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete
-        </button>
-    </form>
+            <button class="btn btn-danger" type="submit">
+                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete
+            </button>
+        </form>
+    </div>
+
 {% endblock %}

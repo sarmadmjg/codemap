@@ -64,3 +64,13 @@ h3 {
 .visit {
     float: right;
 }
+
+.login-well {
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#signinButton {
+    vertical-align: middle;
+}

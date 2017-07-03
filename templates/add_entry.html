@@ -1,56 +1,59 @@
 {% extends "layout.html" %}
 {% block content %}
-    <h2 class="text-center">Create Entry</h2>
-    <form method="POST">
-        <label for="form-name">Entry Name</label>
-        <div class="form-group">
-            <input type="text"
-                   id="form-name"
-                   class="form-control"
-                   name="name"
-                   required>
-        </div>
+    <div class="well">
+        <h2 class="text-center">Create Entry</h2>
+        <form method="POST">
+            <label for="form-name">Entry Name</label>
+            <div class="form-group">
+                <input type="text"
+                       id="form-name"
+                       class="form-control"
+                       name="name"
+                       required>
+            </div>
 
-        <label for="form-desc">Short Description</label>
-        <div class="form-group">
-            <input type="text"
-                   id="form-desc"
-                   class="form-control"
-                   name="description"
-                   required>
-        </div>
+            <label for="form-desc">Short Description</label>
+            <div class="form-group">
+                <input type="text"
+                       id="form-desc"
+                       class="form-control"
+                       name="description"
+                       required>
+            </div>
 
-        <label for="form-link">Link</label>
-        <div class="form-group">
-            <input type="url"
-                   id="form-link"
-                   class="form-control"
-                   name="link"
-                   required>
-        </div>
+            <label for="form-link">Link</label>
+            <div class="form-group">
+                <input type="url"
+                       id="form-link"
+                       class="form-control"
+                       name="link"
+                       required>
+            </div>
 
-        <label for="form-cat">Category</label>
-        <div class="form-group">
-            <select id="form-cat" class="form-control" name="category">
-                <!-- Populate categories and make the referral as default -->
-                {% for cat in categories %}
-                <option value={{ cat.name }}
-                        {% if def_cat and cat.name == def_cat %}
-                        selected
-                        {% endif %}>
-                    {{ cat.long_name }}
-                </option>
-                {% endfor %}
-            </select>
-        </div>
-        <br>
+            <label for="form-cat">Category</label>
+            <div class="form-group">
+                <select id="form-cat" class="form-control" name="category">
+                    <!-- Populate categories and make the referral as default -->
+                    {% for cat in categories %}
+                    <option value={{ cat.name }}
+                            {% if def_cat and cat.name == def_cat %}
+                            selected
+                            {% endif %}>
+                        {{ cat.long_name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <br>
 
-        <a class="btn btn-default" href="{{ url_for('category', cat=def_cat) if def_cat else url_for('home') }}">
-            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Cancel
-        </a>
+            <a class="btn btn-default" href="{{ url_for('category', cat=def_cat) if def_cat else url_for('home') }}">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Cancel
+            </a>
 
-        <button type="submit" class="btn btn-success">
-            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Save
-        </button>
-    </form>
+            <button type="submit" class="btn btn-success">
+                <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Save
+            </button>
+        </form>
+    </div>
+
 {% endblock %}
