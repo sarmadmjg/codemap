@@ -6,6 +6,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from db_setup import Base, Category, Entry
 
+import string
+import random
+from flask import session as login_session
+
 
 # <=======================================================>
 # <==================== Initial Setup ====================>
@@ -34,7 +38,19 @@ categories = session.query(Category).all()
 # Login page
 @app.route('/login/')
 def login():
-    return render_template('login.html')
+    # create a state token
+    state = ''.join([random.choice(string.ascii_letters + string.digits) for _ in range(32)])
+    login_session['state'] = state
+
+    return render_template('login.html', state=state)
+
+
+# Google sign in
+@app.route('/gconnect/', methods=['POST'])
+def gconnect():
+    print(request.data)
+    print(login_session['state'])
+    abort(404)
 
 
 # <=======================================================>

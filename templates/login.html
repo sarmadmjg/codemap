@@ -1,9 +1,56 @@
 {% extends "layout.html" %}
 {% block head %}
-    <meta charset="utf-8">
+    <!-- Google login scripts -->
+    <script src="https://apis.google.com/js/client:platform.js?onload=start" async defer></script>
+
+    <!-- Specify client id with no additional scopes to the default 'profile' and 'email' -->
+    <script>
+        function start() {
+            gapi.load('auth2', function() {
+                auth2 = gapi.auth2.init({
+                    client_id: '445427337286-ifvan84icij2rukh2nfmc61q9vdqfr9q.apps.googleusercontent.com'
+                });
+            });
+        }
+    </script>
 {% endblock %}
 
 {% block content %}
-    <!-- List entries, if any -->
     <h2 class="text-center">Login</h2>
+
+    <button id="signinButton">Sign in with Google</button>
+    <script>
+        $('#signinButton').click(function() {
+            auth2.grantOfflineAccess().then(signInCallback);
+        });
+    </script>
+
+    <script>
+        function signInCallback(authResult) {
+            if (authResult['code']) {
+
+                // Hide the sign-in button
+                $('#signinButton').hide();
+
+                // Send the code to the server
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ url_for("gconnect", state=state) }}',
+                    // Always include an `X-Requested-With` header in every AJAX request,
+                    // to protect against CSRF attacks.
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    contentType: 'application/octet-stream; charset=utf-8',
+                    success: function(result) {
+                        console.log('server successfully responded')
+                    },
+                    processData: false,
+                    data: authResult['code']
+                });
+            } else {
+            // There was an error.
+            }
+        }
+    </script>
 {% endblock %}
