@@ -34,25 +34,25 @@ categories = [
 entries = [
     {
         'name': 'Changing Careers To Be A Developer: 3 Misconceptions to Avoid',
-        'description': '',
+        'description': 'Essential tips',
         'link': 'https://www.nerdery.com/blog/changing-careers-to-be-a-developer-3-misconceptions-to-avoid',
         'category': 'first_steps'
     },
     {
         'name': 'The Career Changer’s Guide to Becoming a Software Developer',
-        'description': '',
+        'description': 'What to expect and where to begin',
         'link': 'https://www.thoughtworks.com/insights/blog/career-changer-s-guide-becoming-software-developer',
         'category': 'first_steps'
     },
     {
         'name': 'Thinking About a Career Change to Tech? Here’s How',
-        'description': '',
+        'description': 'An important article',
         'link': 'http://www.huffingtonpost.com/suzanne-grossman/thinking-about-a-career-c_b_6869398.html',
         'category': 'first_steps'
     },
     {
         'name': 'How Microprocessors Work',
-        'description': '',
+        'description': 'A simplified approach',
         'link': 'http://computer.howstuffworks.com/microprocessor.htm',
         'category': 'comp_fund'
     },
@@ -70,7 +70,7 @@ entries = [
     },
     {
         'name': 'Code Academy',
-        'description': '',
+        'description': 'Learn to code by taking baby steps',
         'link': 'https://www.codecademy.com',
         'category': 'prog_fund'
     },
@@ -82,7 +82,7 @@ entries = [
     },
     {
         'name': 'Hackerrank',
-        'description': '',
+        'description': 'Test yourself by solving programming challenges',
         'link': 'https://www.hackerrank.com',
         'category': 'prog_fund'
     },
@@ -94,13 +94,13 @@ entries = [
     },
     {
         'name': 'TLS Basics',
-        'description': '',
+        'description': 'How HTTPS works',
         'link': 'http://www.internetsociety.org/deploy360/tls/basics/',
         'category': 'networks'
     },
     {
         'name': 'HTTP Basics',
-        'description': '',
+        'description': 'How the web works',
         'link': 'https://www.ntu.edu.sg/home/ehchua/programming/webprogramming/HTTP_Basics.html',
         'category': 'networks'
     },
@@ -118,7 +118,7 @@ entries = [
     },
     {
         'name': 'MongoDB in 30 Minutes',
-        'description': '',
+        'description': 'NoSQL db',
         'link': 'https://www.youtube.com/watch?v=pWbMrx5rVBE',
         'category': 'databases'
     },
