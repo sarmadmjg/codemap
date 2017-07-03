@@ -35,7 +35,7 @@
                 <!-- Populate categories and make the referral as default -->
                 {% for cat in categories %}
                 <option value={{ cat.name }}
-                        {% if cat.name == def_cat %}
+                        {% if def_cat and cat.name == def_cat %}
                         selected
                         {% endif %}>
                     {{ cat.long_name }}
@@ -45,7 +45,7 @@
         </div>
         <br>
 
-        <a class="btn btn-default" href="{{ url_for('category', cat=def_cat) }}">
+        <a class="btn btn-default" href="{{ url_for('category', cat=def_cat) if def_cat else url_for('home') }}">
             <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Cancel
         </a>
 
