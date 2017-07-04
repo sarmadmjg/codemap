@@ -219,9 +219,6 @@ def category(cat):
 @requires_login
 def add_entry(user):
     if request.method == 'GET':
-        csrf_token = generate_random_token()
-        login_session['csrf_token'] = csrf_token
-
         pic = login_session.get('pic')
 
         cat = request.args.get('category')
@@ -230,8 +227,7 @@ def add_entry(user):
                     def_cat=cat,
                     categories=categories,
                     user=user,
-                    pic=pic,
-            csrf_token=csrf_token)
+                    pic=pic)
 
     elif request.method == 'POST':
         # handle new entry
@@ -274,9 +270,6 @@ def edit_entry(id, user):
         abort(403)
 
     if request.method == 'GET':
-        csrf_token = generate_random_token()
-        login_session['csrf_token'] = csrf_token
-
         pic = login_session.get('pic')
 
         return render_template(
@@ -284,15 +277,9 @@ def edit_entry(id, user):
                     entry=entry,
                     categories=categories,
                     user=user,
-                    pic=pic,
-                    csrf_token=csrf_token)
+                    pic=pic)
 
     elif request.method == 'POST':
-        # Check CSRF token
-        csrf_token = login_session.get('csrf_token')
-        if not csrf_token or csrf_token != request.form['csrf_token']:
-            abort(403)
-
         data = request.form
 
         entry.name = data['name']
@@ -323,9 +310,6 @@ def delete_entry(id, user):
         abort(403)
 
     if request.method == 'GET':
-        csrf_token = generate_random_token()
-        login_session['csrf_token'] = csrf_token
-
         pic = login_session.get('pic')
 
         return render_template(
@@ -333,15 +317,9 @@ def delete_entry(id, user):
                     entry=entry,
                     categories=categories,
                     user=user,
-                    pic=pic,
-                    csrf_token=csrf_token)
+                    pic=pic)
 
     elif request.method == 'POST':
-        # Check CSRF token
-        csrf_token = login_session.get('csrf_token')
-        if not csrf_token or csrf_token != request.form['csrf_token']:
-            abort(403)
-
         session.delete(entry)
         session.commit()
 
