@@ -16,6 +16,14 @@ class Category(Base):
     long_name = Column(String(80), nullable=False)
     description = Column(String(250), nullable=True)
 
+    def serialize(self):
+        return {
+            'name': self.name,
+            'long_name': self.long_name,
+            'description': self.description,
+            'entries_url': '/api/categories/{}/entries/'.format(self.name)
+        }
+
 
 class Entry(Base):
     __tablename__ = 'entry'
@@ -26,6 +34,16 @@ class Entry(Base):
     link = Column(String, nullable=False)
     category = Column(String(80), ForeignKey('category.name'))
     poster_uid = Column(String, ForeignKey('user.uid'))
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'description': self.description,
+            'link': self.link,
+            'category': self.category,
+            'poster_uid': self.poster_uid
+        }
 
 
 class User(Base):

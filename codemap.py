@@ -2,7 +2,7 @@
 
 from functools import wraps
 
-from flask import Flask, request, render_template, url_for, redirect, abort, flash
+from flask import Flask, request, render_template, url_for, redirect, abort, flash, jsonify
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -307,6 +307,26 @@ def delete_entry(id, user):
 
         return redirect(url_for('category', cat=entry.category))
 
+
+# <=======================================================>
+# <========================= API =========================>
+# <=======================================================>
+
+
+@app.route('/api/categories/')
+def api_categories():
+    session = Session()
+    cats = session.query(Category).all()
+
+    return jsonify(categories=[cat.serialize() for cat in cats])
+
+
+@app.route('/api/categories/<string:cat>/entries/')
+def api_entries(cat):
+    session = Session()
+    entries = session.query(Entry).filter(Entry.category == cat).all()
+
+    return jsonify(entries=[entry.serialize() for entry in entries])
 
 
 if __name__ == '__main__':
