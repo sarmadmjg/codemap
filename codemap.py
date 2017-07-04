@@ -2,7 +2,8 @@
 
 from functools import wraps
 
-from flask import Flask, request, render_template, url_for, redirect, abort, flash, jsonify
+from flask import Flask, request, render_template, url_for,\
+                  redirect, abort, flash, jsonify
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -38,6 +39,21 @@ categories = session.query(Category).all()
 
 def generate_random_token(length=32):
     return ''.join([random.choice(string.ascii_letters + string.digits) for _ in range(length)])
+
+
+@app.before_request
+def csrf_protect():
+    if request.method == 'GET':
+        csrf_token = generate_random_token()
+
+        login_session['csrf_token'] = csrf_token
+        app.jinja_env.globals['csrf_token'] = csrf_token
+
+    elif request.method == 'POST':
+        # Check CSRF token
+        csrf_token = login_session.get('csrf_token')
+        if not csrf_token or csrf_token != request.form['csrf_token']:
+            abort(403)
 
 
 # <=======================================================>
@@ -218,11 +234,6 @@ def add_entry(user):
             csrf_token=csrf_token)
 
     elif request.method == 'POST':
-        # Check CSRF token
-        csrf_token = login_session.get('csrf_token')
-        if not csrf_token or csrf_token != request.form['csrf_token']:
-            abort(403)
-
         # handle new entry
         data = request.form
         entry = Entry(
@@ -358,6 +369,14 @@ def api_entries(cat):
     entries = session.query(Entry).filter(Entry.category == cat).all()
 
     return jsonify(entries=[entry.serialize() for entry in entries])
+
+
+@app.route('/api/entries/<int:id>/')
+def api_entry(id):
+    session = Session()
+    entry = session.query(Entry).filter(Entry.id == id).one_or_none()
+
+    return jsonify({'error': 'item not found'} if not entry else entry.serialize())
 
 
 if __name__ == '__main__':
