@@ -5,7 +5,11 @@ A project for Udaciy Full Stack NanoDegree
 
 ## Usage
 ### Setup
-First, clone the repository to your machine
+Make sure these dependencies are satisfied
+```
+sudo pip3 install sqlalchemy flask oauth2client
+```
+Clone the repository to your machine
 ```
 git clone https://github.com/sarmadmjg/codemap.git
 cd codemap
