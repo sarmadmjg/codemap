@@ -181,7 +181,7 @@ def requires_login(f):
         uid = login_session.get('uid')
         if user:
             # user is logged in, pass the user instance to the function
-            return f(*args, **kwargs, user=user)
+            return f(*args, user=user, **kwargs)
 
         # User is not logged in, redirect
         return redirect(url_for('login', redir=request.path, **request.args))
