@@ -130,7 +130,7 @@ def gconnect():
     return 'successful'
 
 
-@app.route('/logout/')
+@app.route('/logout/', methods=['POST'])
 def logout():
     credentials_json = login_session.get('credentials')
     # Revoke access if credentials are found
