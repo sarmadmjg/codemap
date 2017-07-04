@@ -4,6 +4,9 @@
         <h2 class="text-center">Edit Entry</h2>
         <p class="text-center">Entry id: <mark>{{ entry.id }}</mark></p>
         <form method="POST">
+            <!-- CSRF token -->
+            <input type=hidden name="csrf_token" value="{{ csrf_token }}">
+
             <label for="form-name">Entry Name</label>
             <div class="form-group">
                 <input type="text"

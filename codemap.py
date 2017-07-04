@@ -36,6 +36,10 @@ session = Session()
 categories = session.query(Category).all()
 
 
+def generate_random_token(length=32):
+    return ''.join([random.choice(string.ascii_letters + string.digits) for _ in range(length)])
+
+
 # <=======================================================>
 # <=================== User Management ===================>
 # <=======================================================>
@@ -45,7 +49,7 @@ categories = session.query(Category).all()
 @app.route('/login/')
 def login():
     # create a state token
-    state = ''.join([random.choice(string.ascii_letters + string.digits) for _ in range(32)])
+    state = generate_random_token()
     login_session['state'] = state
 
     return render_template('login.html', state=state)
@@ -199,6 +203,9 @@ def category(cat):
 @requires_login
 def add_entry(user):
     if request.method == 'GET':
+        csrf_token = generate_random_token()
+        login_session['csrf_token'] = csrf_token
+
         pic = login_session.get('pic')
 
         cat = request.args.get('category')
@@ -207,9 +214,15 @@ def add_entry(user):
                     def_cat=cat,
                     categories=categories,
                     user=user,
-                    pic=pic)
+                    pic=pic,
+            csrf_token=csrf_token)
 
     elif request.method == 'POST':
+        # Check CSRF token
+        csrf_token = login_session.get('csrf_token')
+        if not csrf_token or csrf_token != request.form['csrf_token']:
+            abort(403)
+
         # handle new entry
         data = request.form
         entry = Entry(
@@ -250,6 +263,9 @@ def edit_entry(id, user):
         abort(403)
 
     if request.method == 'GET':
+        csrf_token = generate_random_token()
+        login_session['csrf_token'] = csrf_token
+
         pic = login_session.get('pic')
 
         return render_template(
@@ -257,9 +273,15 @@ def edit_entry(id, user):
                     entry=entry,
                     categories=categories,
                     user=user,
-                    pic=pic)
+                    pic=pic,
+                    csrf_token=csrf_token)
 
     elif request.method == 'POST':
+        # Check CSRF token
+        csrf_token = login_session.get('csrf_token')
+        if not csrf_token or csrf_token != request.form['csrf_token']:
+            abort(403)
+
         data = request.form
 
         entry.name = data['name']
@@ -290,6 +312,9 @@ def delete_entry(id, user):
         abort(403)
 
     if request.method == 'GET':
+        csrf_token = generate_random_token()
+        login_session['csrf_token'] = csrf_token
+
         pic = login_session.get('pic')
 
         return render_template(
@@ -297,9 +322,15 @@ def delete_entry(id, user):
                     entry=entry,
                     categories=categories,
                     user=user,
-                    pic=pic)
+                    pic=pic,
+                    csrf_token=csrf_token)
 
     elif request.method == 'POST':
+        # Check CSRF token
+        csrf_token = login_session.get('csrf_token')
+        if not csrf_token or csrf_token != request.form['csrf_token']:
+            abort(403)
+
         session.delete(entry)
         session.commit()
 

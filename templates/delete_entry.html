@@ -8,6 +8,9 @@
         <p class="text-center">Entry id: <mark>{{ entry.id }}</mark></p>
         <br>
         <form class="text-center" method="POST">
+            <!-- CSRF token -->
+            <input type=hidden name="csrf_token" value="{{ csrf_token }}">
+
             <a class="btn btn-default"
                href="{{ url_for('category', cat=entry.category) }}">
                 <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Cancel

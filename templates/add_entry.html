@@ -3,6 +3,9 @@
     <div class="well">
         <h2 class="text-center">Create Entry</h2>
         <form method="POST">
+            <!-- CSRF token -->
+            <input type=hidden name="csrf_token" value="{{ csrf_token }}">
+
             <label for="form-name">Entry Name</label>
             <div class="form-group">
                 <input type="text"
