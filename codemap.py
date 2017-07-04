@@ -36,6 +36,7 @@ Session = sessionmaker(bind=engine)
 # so only need to be queried once
 session = Session()
 categories = session.query(Category).all()
+session.close()
 
 
 # <=======================================================>
@@ -134,6 +135,7 @@ def gconnect():
     # Store or update data in the db
     session = Session()
     user = session.query(User).filter(User.uid == uid).one_or_none()
+    session.close()
     # New user
     if not user:
         user = User(uid=uid, name=name, email=email)
@@ -212,6 +214,7 @@ def get_user_from_session(login_session):
     if uid:
         session = Session()
         user = session.query(User).filter(User.uid == uid).one_or_none()
+        session.close()
         return user
 
 
@@ -248,6 +251,7 @@ def category(cat):
     app.jinja_env.globals['pic'] = login_session.get('pic')
 
     entries = session.query(Entry).filter(Entry.category == cat).all()
+    session.close()
 
     return render_template(
                 'category.html',
@@ -287,6 +291,7 @@ def add_entry(user):
         session = Session()
         session.add(entry)
         session.commit()
+        session.close()
 
         flash('A new entry was successfully created!', 'alert-success')
 
@@ -300,6 +305,7 @@ def edit_entry(id, user):
     # acquire entry from db
     session = Session()
     entry = session.query(Entry).filter(Entry.id == id).one_or_none()
+    session.close()
 
     # no such entry
     if not entry:
@@ -348,16 +354,20 @@ def delete_entry(id, user):
 
     # If entry is non-existing, abort
     if not entry:
+        session.close()
         abort(404)
 
     # Check if user is not the rightful owner
     if user.uid != entry.poster_uid:
+        session.close()
         abort(403)
 
     # Delete confirmation form
     if request.method == 'GET':
         # Get user photo url from session
         app.jinja_env.globals['pic'] = login_session.get('pic')
+
+        session.close()
 
         return render_template(
                     'delete_entry.html',
@@ -369,6 +379,7 @@ def delete_entry(id, user):
     elif request.method == 'POST':
         session.delete(entry)
         session.commit()
+        session.close()
 
         flash('Entry #' + str(entry.id) + ' was successfully deleted!',
               'alert-success')
@@ -386,6 +397,7 @@ def delete_entry(id, user):
 def api_categories():
     session = Session()
     cats = session.query(Category).all()
+    session.close()
 
     return jsonify(categories=[cat.serialize() for cat in cats])
 
@@ -395,6 +407,7 @@ def api_categories():
 def api_entries(cat):
     session = Session()
     entries = session.query(Entry).filter(Entry.category == cat).all()
+    session.close()
 
     return jsonify(entries=[entry.serialize() for entry in entries])
 
@@ -404,12 +417,12 @@ def api_entries(cat):
 def api_entry(id):
     session = Session()
     entry = session.query(Entry).filter(Entry.id == id).one_or_none()
+    session.close()
 
     return jsonify({'error': 'item not found'} if not entry
                    else entry.serialize())
 
 
 if __name__ == '__main__':
-    app.secret_key = '90maf89j2489dnmo23aeqduemc'
-    app.debug = True
+    app.secret_key = 'JMaDqXrjgr2fK1Od2oyNdCGq2oEH5bNL'
     app.run('0.0.0.0', 5000)

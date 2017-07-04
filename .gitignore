@@ -1,4 +1,3 @@
 *.pyc
 *.db
 .idea/
-client_secret.json
