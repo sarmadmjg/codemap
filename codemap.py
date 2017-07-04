@@ -37,6 +37,11 @@ session = Session()
 categories = session.query(Category).all()
 
 
+# <=======================================================>
+# <====================== Security =======================>
+# <=======================================================>
+
+
 def generate_random_token(length=32):
     return ''.join([random.choice(string.ascii_letters + string.digits) for _ in range(length)])
 
@@ -44,15 +49,20 @@ def generate_random_token(length=32):
 @app.before_request
 def csrf_protect():
     if request.method == 'GET':
-        csrf_token = generate_random_token()
+        csrf_token = login_session.pop('csrf_token', None)
+
+        if not csrf_token:
+            csrf_token = generate_random_token()
 
         login_session['csrf_token'] = csrf_token
         app.jinja_env.globals['csrf_token'] = csrf_token
 
     elif request.method == 'POST':
         # Check CSRF token
-        csrf_token = login_session.get('csrf_token')
-        if not csrf_token or csrf_token != request.form['csrf_token']:
+        csrf_token = login_session.pop('csrf_token', None)
+        if not csrf_token or \
+                (csrf_token != request.args.get('csrf_token') and
+                    csrf_token != request.form.get('csrf_token')):
             abort(403)
 
 
@@ -62,26 +72,14 @@ def csrf_protect():
 
 
 # Login page
-@app.route('/login/')
+@app.route('/login/', methods=['GET', 'POST'])
 def login():
-    # create a state token
-    state = generate_random_token()
-    login_session['state'] = state
-
-    return render_template('login.html', state=state)
+    return render_template('login.html')
 
 
 # Google sign in
 @app.route('/gconnect/', methods=['POST'])
 def gconnect():
-    # If state doesn't match, abort
-    if login_session['state'] != request.args.get('state'):
-        abort(403)
-
-    # If this request does not have `X-Requested-With` header, this could be a CSRF
-    if not request.headers.get('X-Requested-With'):
-        abort(403)
-
     auth_code = request.data
 
     CLIENT_SECRET_FILE = 'client_secret.json'
@@ -147,16 +145,13 @@ def logout():
 
 
 def requires_login(f):
-
     @wraps(f)
     def wrapped(*args, **kwargs):
         user = get_user_from_session(login_session)
-
         if user:
             return f(*args, **kwargs, user=user)
 
         return redirect(url_for('login', redir=request.path, **request.args))
-
 
     return wrapped
 
@@ -186,9 +181,9 @@ def get_user_from_session(login_session):
 @app.route('/')
 def home():
     user = get_user_from_session(login_session)
-    pic = login_session.get('pic')
+    app.jinja_env.globals['pic'] = login_session.get('pic')
 
-    return render_template('home.html', categories=categories, user=user, pic=pic)
+    return render_template('home.html', categories=categories, user=user)
 
 
 # List items in a given category
@@ -202,7 +197,7 @@ def category(cat):
     if not cat_obj:
         abort(404)
 
-    pic = login_session.get('pic')
+    app.jinja_env.globals['pic'] = login_session.get('pic')
 
     entries = session.query(Entry).filter(Entry.category == cat).all()
     return render_template(
@@ -210,8 +205,7 @@ def category(cat):
                 this_cat=cat_obj,
                 categories=categories,
                 entries=entries,
-                user=user,
-                pic=pic)
+                user=user)
 
 
 # Add entry
@@ -219,15 +213,14 @@ def category(cat):
 @requires_login
 def add_entry(user):
     if request.method == 'GET':
-        pic = login_session.get('pic')
+        app.jinja_env.globals['pic'] = login_session.get('pic')
 
         cat = request.args.get('category')
         return render_template(
                     'add_entry.html',
                     def_cat=cat,
                     categories=categories,
-                    user=user,
-                    pic=pic)
+                    user=user)
 
     elif request.method == 'POST':
         # handle new entry
@@ -247,11 +240,12 @@ def add_entry(user):
 
         return redirect(url_for('category', cat=data['category']))
 
+
 # Show entry details
 @app.route('/entries/<int:id>/')
 def entry(id):
     user = get_user_from_session(login_session)
-    pic = login_session.get('pic')
+    app.jinja_env.globals['pic'] = login_session.get('pic')
     return 'You are previewing entry ' + str(id)
 
 
@@ -270,14 +264,13 @@ def edit_entry(id, user):
         abort(403)
 
     if request.method == 'GET':
-        pic = login_session.get('pic')
+        app.jinja_env.globals['pic'] = login_session.get('pic')
 
         return render_template(
                     'edit_entry.html',
                     entry=entry,
                     categories=categories,
-                    user=user,
-                    pic=pic)
+                    user=user)
 
     elif request.method == 'POST':
         data = request.form
@@ -310,14 +303,13 @@ def delete_entry(id, user):
         abort(403)
 
     if request.method == 'GET':
-        pic = login_session.get('pic')
+        app.jinja_env.globals['pic'] = login_session.get('pic')
 
         return render_template(
                     'delete_entry.html',
                     entry=entry,
                     categories=categories,
-                    user=user,
-                    pic=pic)
+                    user=user)
 
     elif request.method == 'POST':
         session.delete(entry)

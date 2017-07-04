@@ -38,7 +38,7 @@
                 // Send the code to the server
                 $.ajax({
                     type: 'POST',
-                    url: '{{ url_for("gconnect", state=state) }}',
+                    url: '{{ url_for("gconnect", csrf_token=csrf_token) }}',
                     // Always include an `X-Requested-With` header in every AJAX request,
                     // to protect against CSRF attacks.
                     headers: {
