@@ -1,6 +1,5 @@
 {% extends "layout.html" %}
 {% block content %}
-    <!-- List entries, if any -->
     <div class="row">
         <div class="col-xs-8">
             <h2>{{ this_cat.long_name }}</h2>
@@ -14,6 +13,7 @@
         </div>
     </div>
 
+    <!-- List entries, if any -->
     <div class="row">
         {% if entries %}
         {% for entry in entries %}
@@ -35,7 +35,6 @@
                 <div class="panel-body">
                     <p class="entry-description">{{ entry.description }}</p>
                     <a class="visit btn btn-default" href="{{ entry.link }}">Visit</a>
-                    <!-- <p class="text-small">Posted by: <strong>{{ entry.poster_uid }}</strong></p> -->
                 </div>
             </article>
         </div>
