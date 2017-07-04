@@ -103,10 +103,16 @@ def gconnect():
     CLIENT_SECRET_FILE = 'client_secret.json'
 
     # Exchange auth code for access token
-    credentials = client.credentials_from_clientsecrets_and_code(
-        CLIENT_SECRET_FILE,
-        ['profile', 'email'],
-        auth_code)
+    try:
+        credentials = client.credentials_from_clientsecrets_and_code(
+            CLIENT_SECRET_FILE,
+            ['profile', 'email'],
+            auth_code)
+
+    # Couldn't get access token
+    except client.FlowExchangeError:
+        return jsonify(message='Server could not get an access token'), 401
+
 
     # Get user info
     userinfo_url = "https://www.googleapis.com/oauth2/v1/userinfo"
@@ -141,7 +147,7 @@ def gconnect():
 
     flash('You logged in successful with your Google account', 'alert-success')
 
-    return 'successful'
+    return jsonify(message='logged in successfully')
 
 
 # log out handler
