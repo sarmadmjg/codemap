@@ -32,7 +32,8 @@ Base.metadata.bind = engine
 
 Session = sessionmaker(bind=engine)
 
-# Categories can only be added and deleted by siteAdmin, so only need to be queried once
+# Categories can only be added and deleted by siteAdmin
+# so only need to be queried once
 session = Session()
 categories = session.query(Category).all()
 
@@ -43,11 +44,24 @@ categories = session.query(Category).all()
 
 
 def generate_random_token(length=32):
-    return ''.join([random.choice(string.ascii_letters + string.digits) for _ in range(length)])
+    """generate a random string
+
+    Args:
+        length (int, optional): length of the string
+
+    Returns:
+        TYPE: Description
+    """
+    return ''.join([random.choice(string.ascii_letters + string.digits)
+                    for _ in range(length)])
 
 
 @app.before_request
 def csrf_protect():
+    """Protect all post requests with anti-forgery token
+    """
+
+    # If a token isn't present, create one in the session
     if request.method == 'GET':
         csrf_token = login_session.pop('csrf_token', None)
 
@@ -55,11 +69,15 @@ def csrf_protect():
             csrf_token = generate_random_token()
 
         login_session['csrf_token'] = csrf_token
+
+        # Make the token available for templates
         app.jinja_env.globals['csrf_token'] = csrf_token
 
     elif request.method == 'POST':
-        # Check CSRF token
+        # pop token once it's used to force create new one in future requests
         csrf_token = login_session.pop('csrf_token', None)
+
+        # Check CSRF token, abort if not matching
         if not csrf_token or \
                 (csrf_token != request.args.get('csrf_token') and
                     csrf_token != request.form.get('csrf_token')):
@@ -84,7 +102,7 @@ def gconnect():
 
     CLIENT_SECRET_FILE = 'client_secret.json'
 
-    # Exchange auth code for access token, refresh token, and ID token
+    # Exchange auth code for access token
     credentials = client.credentials_from_clientsecrets_and_code(
         CLIENT_SECRET_FILE,
         ['profile', 'email'],
@@ -95,7 +113,7 @@ def gconnect():
     params = {'access_token': credentials.access_token, 'alt': 'json'}
     data = requests.get(userinfo_url, params=params).json()
 
-    # Get profile info from ID token
+    # Extract profile data
     uid = data['id']
     name = data['name']
     email = data['email']
@@ -103,11 +121,9 @@ def gconnect():
 
     # Store data in user session
     login_session['uid'] = uid
-    login_session['name'] = name
     login_session['pic'] = pic
     # store credentials for future use
     login_session['credentials'] = credentials.to_json()
-    # print(credentials)
 
     # Store or update data in the db
     session = Session()
@@ -128,6 +144,7 @@ def gconnect():
     return 'successful'
 
 
+# log out handler
 @app.route('/logout/', methods=['POST'])
 def logout():
     credentials_json = login_session.get('credentials')
@@ -145,26 +162,46 @@ def logout():
 
 
 def requires_login(f):
+    """function wrapper for pages that require authenticated users
+
+    Args:
+        f (function): any routing function
+    """
     @wraps(f)
     def wrapped(*args, **kwargs):
         user = get_user_from_session(login_session)
+        uid = login_session.get('uid')
         if user:
+            # user is logged in, pass the user instance to the function
             return f(*args, **kwargs, user=user)
 
+        # User is not logged in, redirect
         return redirect(url_for('login', redir=request.path, **request.args))
 
     return wrapped
 
 
 def clean_session(login_session):
+    """clear user session
+
+    Args:
+        login_session (flask.session): user session
+    """
     # Use pop instead of del to avoid errors with non-existing keys
     login_session.pop('credentials', None)
     login_session.pop('uid', None)
-    login_session.pop('name', None)
     login_session.pop('pic', None)
 
 
 def get_user_from_session(login_session):
+    """get User instance for logged in users
+
+    Args:
+        login_session (flask.session): user session
+
+    Returns:
+        User: single User instance or None
+    """
     uid = login_session.get('uid')
     if uid:
         session = Session()
@@ -181,6 +218,7 @@ def get_user_from_session(login_session):
 @app.route('/')
 def home():
     user = get_user_from_session(login_session)
+    # Get user photo url from session
     app.jinja_env.globals['pic'] = login_session.get('pic')
 
     return render_template('home.html', categories=categories, user=user)
@@ -190,16 +228,21 @@ def home():
 @app.route('/categories/<string:cat>/')
 def category(cat):
     user = get_user_from_session(login_session)
+
     session = Session()
-    cat_obj = session.query(Category).filter(Category.name == cat).one_or_none()
+    cat_obj = session.query(Category) \
+        .filter(Category.name == cat) \
+        .one_or_none()
 
     # If category doesn't exit, raise 404
     if not cat_obj:
         abort(404)
 
+    # Get user photo url from session
     app.jinja_env.globals['pic'] = login_session.get('pic')
 
     entries = session.query(Entry).filter(Entry.category == cat).all()
+
     return render_template(
                 'category.html',
                 this_cat=cat_obj,
@@ -212,7 +255,9 @@ def category(cat):
 @app.route('/entries/add/', methods=['GET', 'POST'])
 @requires_login
 def add_entry(user):
+    # New Entry form
     if request.method == 'GET':
+        # Get user photo url from session
         app.jinja_env.globals['pic'] = login_session.get('pic')
 
         cat = request.args.get('category')
@@ -222,9 +267,10 @@ def add_entry(user):
                     categories=categories,
                     user=user)
 
+    # Handle new entry
     elif request.method == 'POST':
-        # handle new entry
         data = request.form
+
         entry = Entry(
             name=data['name'],
             description=data['description'],
@@ -241,21 +287,15 @@ def add_entry(user):
         return redirect(url_for('category', cat=data['category']))
 
 
-# Show entry details
-@app.route('/entries/<int:id>/')
-def entry(id):
-    user = get_user_from_session(login_session)
-    app.jinja_env.globals['pic'] = login_session.get('pic')
-    return 'You are previewing entry ' + str(id)
-
-
 # Edit an entry
 @app.route('/entries/<int:id>/edit/', methods=['GET', 'POST'])
 @requires_login
 def edit_entry(id, user):
-    # Check if the entry id is valid
+    # acquire entry from db
     session = Session()
     entry = session.query(Entry).filter(Entry.id == id).one_or_none()
+
+    # no such entry
     if not entry:
         abort(404)
 
@@ -263,7 +303,9 @@ def edit_entry(id, user):
     if user.uid != entry.poster_uid:
         abort(403)
 
+    # Edit entry form
     if request.method == 'GET':
+        # Get user photo url from session
         app.jinja_env.globals['pic'] = login_session.get('pic')
 
         return render_template(
@@ -272,6 +314,7 @@ def edit_entry(id, user):
                     categories=categories,
                     user=user)
 
+    # Store edits
     elif request.method == 'POST':
         data = request.form
 
@@ -283,7 +326,8 @@ def edit_entry(id, user):
         session.add(entry)
         session.commit()
 
-        flash('Entry #' + str(entry.id) + ' was successfully edited!', 'alert-success')
+        flash('Entry #' + str(entry.id) + ' was successfully edited!',
+              'alert-success')
 
         return redirect(url_for('category', cat=data['category']))
 
@@ -292,9 +336,11 @@ def edit_entry(id, user):
 @app.route('/entries/<int:id>/delete/', methods=['GET', 'POST'])
 @requires_login
 def delete_entry(id, user):
-    # Check if the entry id is valid
+    # Acquire the entry from db
     session = Session()
     entry = session.query(Entry).filter(Entry.id == id).one_or_none()
+
+    # If entry is non-existing, abort
     if not entry:
         abort(404)
 
@@ -302,7 +348,9 @@ def delete_entry(id, user):
     if user.uid != entry.poster_uid:
         abort(403)
 
+    # Delete confirmation form
     if request.method == 'GET':
+        # Get user photo url from session
         app.jinja_env.globals['pic'] = login_session.get('pic')
 
         return render_template(
@@ -311,11 +359,13 @@ def delete_entry(id, user):
                     categories=categories,
                     user=user)
 
+    # Delete entry from db
     elif request.method == 'POST':
         session.delete(entry)
         session.commit()
 
-        flash('Entry #' + str(entry.id) + ' was successfully deleted!', 'alert-success')
+        flash('Entry #' + str(entry.id) + ' was successfully deleted!',
+              'alert-success')
 
         return redirect(url_for('category', cat=entry.category))
 
@@ -325,6 +375,7 @@ def delete_entry(id, user):
 # <=======================================================>
 
 
+# List all categories
 @app.route('/api/categories/')
 def api_categories():
     session = Session()
@@ -333,6 +384,7 @@ def api_categories():
     return jsonify(categories=[cat.serialize() for cat in cats])
 
 
+# List entries in specific category
 @app.route('/api/categories/<string:cat>/entries/')
 def api_entries(cat):
     session = Session()
@@ -341,12 +393,14 @@ def api_entries(cat):
     return jsonify(entries=[entry.serialize() for entry in entries])
 
 
+# List details of a specific entry
 @app.route('/api/entries/<int:id>/')
 def api_entry(id):
     session = Session()
     entry = session.query(Entry).filter(Entry.id == id).one_or_none()
 
-    return jsonify({'error': 'item not found'} if not entry else entry.serialize())
+    return jsonify({'error': 'item not found'} if not entry
+                   else entry.serialize())
 
 
 if __name__ == '__main__':
