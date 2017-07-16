@@ -91,7 +91,7 @@ def csrf_protect():
 
 
 # Login page
-@app.route('/login/', methods=['GET', 'POST'])
+@app.route('/login/')
 def login():
     return render_template('login.html')
 
