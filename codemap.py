@@ -135,7 +135,6 @@ def gconnect():
     # Store or update data in the db
     session = Session()
     user = session.query(User).filter(User.uid == uid).one_or_none()
-    session.close()
     # New user
     if not user:
         user = User(uid=uid, name=name, email=email)
@@ -146,6 +145,7 @@ def gconnect():
 
     session.add(user)
     session.commit()
+    session.close()
 
     flash('You logged in successful with your Google account', 'alert-success')
 
