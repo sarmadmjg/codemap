@@ -1,0 +1,22 @@
+{
+  "name": "codemap",
+  "version": "2.0.0",
+  "description": "Codemap in Nodejs single page app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sarmadmjg/codemap.git"
+  },
+  "author": "Sarmad Georgie",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sarmadmjg/codemap/issues"
+  },
+  "homepage": "https://github.com/sarmadmjg/codemap#readme",
+  "dependencies": {
+    "express": "^4.15.3"
+  }
+}
