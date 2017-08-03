@@ -1,5 +1,10 @@
-let express = require('express');
-let app = express();
+const express = require('express');
+const app = express();
+
+const db = require('./db_setup');
+const Category = db.Category;
+const User = db.User;
+const Entry = db.Entry;
 
 let apiRouter = require('./api');
 
