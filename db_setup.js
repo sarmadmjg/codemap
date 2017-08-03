@@ -45,6 +45,7 @@ Entry.belongsTo(User);
 Entry.belongsTo(Category);
 
 module.exports = {
+    'sequelize': sequelize,
     'User': User,
     'Category': Category,
     'Entry': Entry

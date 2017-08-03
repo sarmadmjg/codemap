@@ -10,6 +10,6 @@ let apiRouter = require('./api');
 
 app.use('/api', apiRouter);
 
-app.use('/', express.static('static'));
+app.use('/static', express.static('static'));
 
 app.listen(80);

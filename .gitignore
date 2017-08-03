@@ -2,3 +2,4 @@
 *.db
 .idea/
 node_modules
+.vscode
